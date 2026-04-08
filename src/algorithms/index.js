@@ -1,44 +1,49 @@
-const fs = require('fs');
-const path = require('path');
-const redis =  require('../store/redis.store');
+const fs = require("fs");
+const path = require("path");
+const redis = require('../store/redis.store');
 
-const scripts = {};
 
-async function loadScript(name, file){
-    const script = fs.readFileSync(
-        path.join(__dirname, file),
-        'utf8'
+const scripts = {
+    "sliding-window": fs.readFileSync(
+        path.join(__dirname, "slidingWindow.lua"),
+        "utf-8"
+    ),
+    "token-bucket": fs.readFileSync(
+        path.join(__dirname, "tokenBucket.lua"),
+        "utf-8"
+    ),
+};
+
+const shaMap = {};
+
+async function loadScripts(name) {
+    if (!shaMap[name]){
+        shaMap[name] = await redis.script("LOAD", scripts[name]);
+    }
+    return
+}
+
+async function execute({ algorithm, key, limit, window}){
+    const sha = await loadScripts(algorithm);
+
+    const now = Date.now();
+
+    const result = await redis.evalsha(
+        sha,
+        1,
+        key,
+        now,
+        window * 1000,
+        limit
     );
 
-    const sha = await redis.script('LOAD', script);
-
-    scripts[name] = {
-        sha,
-        script
-    };
-}
-
-async function initScripts(){
-    await loadScript('tokenBucket', 'tokenBucket.lua');
-    await loadScript('slidingWindow', 'slidingWindow.lua');
-}
-
-
-async function execScript(name, keys = [], args = []){
-    const { sha, script } = scripts[name];
-
-    try {
-        return await redis.evalsha(sha, keys.length, ...keys, ...args);
-    } catch(err) {
-        // fallback if script is not cached
-        if(err.message.includes('NOSCRIPT')){
-            return await redis.eval(script, keys.length, ...keys, ...args);
-        }
-        throw err;
+    return {
+        allowed: result[0] === 1,
+        remaining: result[1],
+        resetTime: result[2]
     }
 }
 
 module.exports = {
-    initScripts,
-    execScript
-};
+    execute
+}

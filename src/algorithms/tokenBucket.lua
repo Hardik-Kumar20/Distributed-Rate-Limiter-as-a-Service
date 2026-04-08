@@ -1,36 +1,38 @@
+-- KEYS[1] = key
+-- ARGV[1] = current timestamp (ms)
+-- ARGV[2] = refill rate (tokens per ms)
+-- ARGV[3] = capacity
+
 local key = KEYS[1]
+local now = tonumber(ARGV[1])
+local rate = tonumber(ARGV[2])
+local capacity = tonumber(ARGV[3])
 
-local capacity = tonumber(ARGV[1])
-local refill_rate = tonumber(ARGV[2])
-local current_time = tonumber(ARGV[3])
+-- get stored data
+local data = redis.call("HMGET", key, "tokens", "last_refill")
 
-local data = redis.call("HMGET", key, "tokens", "last_refill_time")
-
-local tokens  =  tonumber(data[1]) 
-local last_refill = tonumber(data[2])
+local tokens = tonumber(data[1])
+local last = tonumber(data[2])
 
 if tokens == nil then 
-    tokens = capacity 
-    last_refill = current_time
+    tokens = capacity
+    last = now
 end
 
-local delta = current_time - last_refill
-local refill = delta * refill_rate
-
-tokens = math.min(capacity, tokens + refill)
+-- refill tokens
+local delta = now - last
+local refill = delta * rate
+tokens =  math.min(capacity, tokens + refill)
 
 local allowed = 0
 
-if tokens >=1 then 
+if tokens >= 1 then 
     allowed = 1
     tokens = tokens - 1
 end
 
-redis.call("HMSET", key,
-"tokens", tokens,
-"last_refill" , current_time
-)
-
+-- store updated values 
+redis.call("HMSET", key, "tokens", tokens, "last", now)
 redis.call("PEXPIRE", key, 60000)
 
-return {allowed, tokens}
+return {allowed, math.floor(tokens), now}

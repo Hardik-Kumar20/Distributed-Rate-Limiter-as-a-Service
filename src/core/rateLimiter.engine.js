@@ -1,69 +1,30 @@
-const { execScript } = require('../algorithms');
-const { buildKey } = require('../utils/keyBuilder');
-const { now } = require('../utils/clock');
-const { createDecision } = require('./decision.model');
-const configService = require('../config/config.service');
-const metrics = require('../metrics/metrics');
+const algorithms = require('./algorithms');
+const configService = require('../services/config.service');
+const store = require("../store/redis.store");
 
-
-async function check({ apiKey, route, identifier}){
-    const start = Date.now();
-
-    const config = await configService.getConfig(apiKey);
-
-    const key = buildKey(apiKey, route, identifier);
-
-    let result;
-    switch (config.algorithm) {
-        case 'token_bucket' : {
-            result = await execScript(
-                'tokenBucket',
-                [key],
-                [
-                    config.capacity,
-                    config.refillRate,
-                    now()
-                ]
-            );
-            break;
+class RateLimiterEngine{
+    async check({ key, limit, window, algorithm}){
+        if(!key || !limit || !window || !algorithm){
+            throw new Error('Invalid rate limiter params');
         }
 
-        case 'sliding_window' : {
-            result = await execScript(
-                'slidingWindow',
-                [key],
-                [
-                    config.window,
-                    config.limit,
-                    now()
-                ]
-            );
-            break;
-        }
+        const config = await configService.getConfig(key);
 
-        default:
-            throw new Error(`Unsupported algorithm: ${config.algorithm}`);
+        const { limit, window, algorithm } = config;
+
+
+        //executing algorihtm 
+        const result = await algorithms.execute({
+            algorithm,
+            key,
+            limit,
+            window,
+            store
+        });
+
+        // normalize response
+        return result;
     }
-
-
-    const allowed = result[0] === 1;
-    const remaining = Math.floor(result[1] || 0);
-
-    const decision = createDecision({
-        allowed,
-        remaining
-    });
-
-    metrics.reordRequest();
-    if(!allowed) metrics.recordBlocked();
-
-    const duration = Date.now() - start;
-    metrics.recordLatency(duration);
-
-    return decision;
-
 }
 
-module.exports = {
-    check
-};
+module.exports = new RateLimiterEngine();
