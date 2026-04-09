@@ -1,10 +1,7 @@
-const app = require('./app');
-const { initScripts } = require('./algorithms');
+const app = require("./app");
 
 async function start() {
   const port = 3000;
-
-  await initScripts();
 
   await app.listen({ port });
 

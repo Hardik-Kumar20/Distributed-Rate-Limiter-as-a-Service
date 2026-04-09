@@ -1,11 +1,19 @@
-const { check } = require('../../../core/rateLimiter.engine');
+const engine = require("../../../core/rateLimiter.engine");
+const perUserPolicy = require("../../../policies/perUser.policy");
 
-async function checkRoute(req, reply) {
-  const { apiKey, route, identifier } = req.body;
+async function routes(fastify, options) {
+  fastify.post("/check", async (req, reply) => {
+    try {
+      const { key } = perUserPolicy(req);
 
-  const result = await check({ apiKey, route, identifier });
+      const result = await engine.check({ key });
 
-  return reply.send(result);
+      return result;
+    } catch (err) {
+      reply.code(400);
+      return { error: err.message };
+    }
+  });
 }
 
-module.exports = checkRoute;
+module.exports = routes;

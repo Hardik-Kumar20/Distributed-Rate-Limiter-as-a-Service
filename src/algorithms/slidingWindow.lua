@@ -9,7 +9,7 @@ local window = tonumber(ARGV[2])
 local limit = tonumber(ARGV[3])
 
 -- remove old requests
-resdis.call("ZREMRANGEBYSCORE", key, 0, now - window)
+redis.call("ZREMRANGEBYSCORE", key, 0, now - window)
 
 --count current requests
 local count = redis.call("ZCARD", key)
