@@ -30,42 +30,46 @@ async function loadScripts(name) {
     return shaMap[name];
 }
 
-async function execute({ algorithm, key, limit, window}){
+async function execute({ algorithm, key, limit, window }) {
+    console.log("ALGO RECEIVED:", { algorithm, key });
     const now = Date.now();
-
-    try{
     const sha = await loadScripts(algorithm);
-
-    const result = await redis.evalsha(
+  
+    let result;
+  
+    if (algorithm === "sliding-window") {
+      result = await redis.evalsha(
         sha,
         1,
         key,
         now,
         window * 1000,
         limit
-    );
-
-    return format(result);
-} catch (err) {
-    if (err.message.includes("NOSCRIPT")) {
-        console.log("⚠️ Reloading script...");
-  
-        const sha = await redis.script("load", scripts[algorithm]);
-  
-        const result = await redis.evalsha(
-          sha,
-          1,
-          key,
-          now,
-          window * 1000,
-          limit
-        );
-  
-        return format(result);
-      }
-  
-      throw err;
+      );
     }
+  
+    else if (algorithm === "token-bucket") {
+      const rate = limit / (window * 1000); // tokens per ms
+
+      console.log("TOKEN BUCKET USING KEY:", key);
+  
+      result = await redis.evalsha(
+        sha,
+        1,
+        key,
+        now,
+        rate,
+        limit
+      );
+    }
+  
+    else {
+      throw new Error("Unknown algorithm");
+    }
+  
+    return format(result);
+  }
+  
 
     function format(result) {
         return {
@@ -74,7 +78,6 @@ async function execute({ algorithm, key, limit, window}){
           resetTime: result[2],
         };
     }
-}
 
 module.exports = {
     execute

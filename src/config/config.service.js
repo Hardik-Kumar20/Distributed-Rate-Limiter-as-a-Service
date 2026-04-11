@@ -1,8 +1,10 @@
 const redis = require('../store/redis.store');
 
 class ConfigService {
-    async getConfig(key) {
-        const config = await redis.get(`config:${key}`);
+    async getConfig({apiKey, endpoint, scope}) {
+        const redisKey = `config:rate_limit:${scope}:${apiKey}:${endpoint}`;
+
+        const config = await redis.get(redisKey);
 
         if(!config) {
             // fallback to default config

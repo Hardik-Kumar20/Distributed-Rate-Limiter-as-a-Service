@@ -1,5 +1,5 @@
-function buildKey({ apiKey, route, identifier }) {
-    return `rate_limit:${apiKey}:${route}:${identifier}`;
+function buildKey({scope, apiKey, route, identifier }) {
+    return `rate_limit:${scope}:${apiKey}:${route}:${identifier}`;
   }
   
   module.exports = { buildKey };

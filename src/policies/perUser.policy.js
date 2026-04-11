@@ -6,6 +6,7 @@ module.exports = (req) => {
     }
 
     return {
-        key: `user:${userId}`,
+        identifier: userId,
+        type: "user",
     }
 }

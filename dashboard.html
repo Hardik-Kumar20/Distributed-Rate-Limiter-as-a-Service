@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rate Limiter Dashboard</title>
+  <style>
+    body { font-family: Arial; background: #111; color: #fff; }
+    .allowed { color: #00ff88; }
+    .blocked { color: #ff4d4d; }
+  </style>
+</head>
+<body>
+
+<h2>🔥 Rate Limiter Dashboard</h2>
+
+<ul id="logs"></ul>
+
+<script>
+  const ws = new WebSocket("ws://localhost:3000");
+
+  ws.onmessage = (event) => {
+    const { data } = JSON.parse(event.data);
+
+    const li = document.createElement("li");
+
+    li.textContent = `${data.scope} | ${data.identifier} → ${data.allowed ? "ALLOWED" : "BLOCKED"} (${data.remaining})`;
+
+    li.className = data.allowed ? "allowed" : "blocked";
+
+    document.getElementById("logs").prepend(li);
+  };
+</script>
+
+</body>
+</html>

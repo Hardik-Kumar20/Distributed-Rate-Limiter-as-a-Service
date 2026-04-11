@@ -9,7 +9,7 @@ local rate = tonumber(ARGV[2])
 local capacity = tonumber(ARGV[3])
 
 -- get stored data
-local data = redis.call("HMGET", key, "tokens", "last_refill")
+local data = redis.call("HMGET", key, "tokens", "last_refill");
 
 local tokens = tonumber(data[1])
 local last = tonumber(data[2])
@@ -32,7 +32,9 @@ if tokens >= 1 then
 end
 
 -- store updated values 
-redis.call("HMSET", key, "tokens", tokens, "last", now)
-redis.call("PEXPIRE", key, 60000)
+redis.call("HMSET", key, "tokens", tokens, "last_refill", now)
+
+-- dynamic TTL
+redis.call("PEXPIRE", key, math.ceil(capacity / rate))
 
 return {allowed, math.floor(tokens), now}
