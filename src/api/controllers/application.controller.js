@@ -14,5 +14,10 @@ module.exports = {
     async findById(id){
         const app = await applicationRepo.findById(id);
         return app;
+    },
+
+    async deleteApp(id){
+        const app = await applicationRepo.deleteApp(id);
+        return app;
     }
 }

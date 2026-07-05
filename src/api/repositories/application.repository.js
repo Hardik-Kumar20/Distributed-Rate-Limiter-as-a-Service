@@ -26,11 +26,21 @@ class ApplicationRepo{
         
         const result = await pool.query(query);
         return result.rows;
-    },
+    }
     
     async findById(id){
         const query = 
         `SELECT * FROM applications
+         WHERE id = $1;
+        `
+        const result = await pool.query(query, [id]);
+        return result.rows[0];
+    }
+
+
+    async deleteApp(id){
+        const query =
+        `DELETE FROM applications
          WHERE id = $1;
         `
         const result = await pool.query(query, [id]);

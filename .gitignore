@@ -14,5 +14,5 @@ Thumbs.db
 .cache/
 tmp/
 temp/
-*.pidnode_modules/
-node_modules/
+*.pid
+
