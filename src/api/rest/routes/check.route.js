@@ -1,15 +1,18 @@
-const engine = require("../../../core/rateLimiter.engine");
+const express = require('express');
+const router = express.Router();
+const rateLimiterController = require('../../controllers/rateLimiter.controller');
 
-async function routes(fastify, options) {
-  fastify.post("/check", async (req, reply) => {
-    try {
-      const result = await engine.check( req );
-      return result;
-    } catch (err) {
-      reply.code(400);
-      return { error: err.message };
+router.post('/check', async (req, res) =>{
+    try{
+        const {key, plan} = req.body;
+        const result = await rateLimiterController.checkRateLimit(key, plan);
+        res.json(result);
+    }catch(err){
+        console.error(err);
+        res.status(500).json({
+        error: err.message
+    });
     }
-  });
-}
+})
 
-module.exports = routes;
+module.exports = router;

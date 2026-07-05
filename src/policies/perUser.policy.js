@@ -1,12 +1,13 @@
-module.exports = (req) => {
-    const userId = req.headers["x-user-id"];
+module.exports = {
+    free: {
+        algorithm: "token-bucket",
+        capacity: 20,
+        refillRate: 0.02,
+    },
 
-    if (!userId) {
-        throw new Error("User ID is required for per-user rate limiting");
-    }
-
-    return {
-        identifier: userId,
-        type: "user",
+    premium: {
+        algorithm: "token-bucket",
+        capacity: 100,
+        refillRate: 0.1,
     }
 }

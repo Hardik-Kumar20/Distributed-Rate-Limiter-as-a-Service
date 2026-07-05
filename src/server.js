@@ -1,14 +1,15 @@
 const app = require("./app");
-const websocket = require("./realtime/websocket.server");
+const redisStore = require("./store/redis.store");
 
-async function start() {
-  const port = 3000;
+async function bootstrap() {
 
-  await app.listen({ port });
+    await redisStore.connect();
 
-  websocket.init(app.server);
-
-  console.log(`🚀 Server running on port ${port}`);
+    app.listen(3000, () => {
+        console.log(
+            "Server running on port 3000"
+        );
+    });
 }
 
-start();
+bootstrap();

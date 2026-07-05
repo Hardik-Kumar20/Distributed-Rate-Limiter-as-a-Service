@@ -1,24 +1,31 @@
-const redis = require('../store/redis.store');
+const redisStore = require('../store/redis.store');
+const policyRepository = require('../api/repositories/policy.repository');
 
 class ConfigService {
-    async getConfig({apiKey, endpoint, scope}) {
-        const redisKey = `config:rate_limit:${scope}:${apiKey}:${endpoint}`;
+    async getPolicy(plan) {
+        const key = `policy:${plan}`;
 
-        const config = await redis.get(redisKey);
+        const cachedPolicy = await redisStore.get(key);
 
-        if(!config) {
-            // fallback to default config
-            return {
-                limit: 5,
-                window: 60,
-                algorithm: "sliding-window"
-            };
+        if(cachedPolicy) {
+            return JSON.parse(cachedPolicy);
         }
-        return JSON.parse(config);
+
+        const policy = await policyRepository.findByPlan(plan);
+        if(!policy){
+            return null;
+        }
+        await redisStore.set(key, JSON.stringify(policy));
+
+        return policy;
     }
 
-    async setConfig(key, value){
-        await redis.set(`config:${key}`, JSON.stringify(value));
+    async setPolicy(plan, policy){
+        await redisStore.set(
+            `policy:${plan}`,
+            JSON.stringify(policy)
+        );
+        return policy 
     }
 }
 
