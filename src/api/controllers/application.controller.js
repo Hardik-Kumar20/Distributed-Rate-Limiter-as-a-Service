@@ -8,7 +8,7 @@ module.exports = {
 
     async findAll(){
         const apps = await applicationRepo.findAll();
-        return res.json(apps);
+        return apps;
     },
 
     async findById(id){
