@@ -7,7 +7,7 @@ module.exports = {
     },
 
     async findAll(){
-        const apps = await applicationRepo.findAll();
+        const apps = await applicationRepo.findAll(owner_id);
         return apps;
     },
 

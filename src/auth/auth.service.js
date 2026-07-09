@@ -5,12 +5,12 @@ const { generateToken } = require("../utils/jwt");
 module.exports = {
     async register({ email, password }){
         if (!email || !password) {
-            throw new BadRequestError("Email and password are required");
+            throw new Error("Email and password are required");
         }
 
         const existingUser = await userRepo.findByEmail(email);
         if (existingUser) {
-            throw new ConflictError("User already exists");
+            throw new Error("User already exists");
         }
 
         // Hash the password
@@ -34,19 +34,19 @@ module.exports = {
 
     async login({ email, password }){
         if(!email || !password){
-            throw new BadRequestError("Email and password are required");
+            throw new Error("Email and password are required");
         }
 
         const user = await userRepo.findByEmail(email);
         if(!user){
-            throw new UnauthorizedError("Invalid email or password");
+            throw new Error("Invalid email or password");
         }
 
         // Compare the password
         const isPasswordValid = await comparePassword(password, user.password_hash);
 
         if(!isPasswordValid){
-            throw new UnauthorizedError("Invalid email or password");
+            throw new Error("Invalid email or password");
         }
 
         // Generate a JWT token

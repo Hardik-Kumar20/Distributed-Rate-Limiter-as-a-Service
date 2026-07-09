@@ -20,11 +20,13 @@ class ApplicationRepo{
 
     async findAll(){
         const query = 
-        `SELECT * FROM applications
-         ORDER BY created_at DESC;
+        `SELECT *
+        FROM applications
+        WHERE owner_id = $1
+        ORDER BY created_at DESC;
         `
         
-        const result = await pool.query(query);
+        const result = await pool.query(query, [owner_id]);
         return result.rows;
     }
     

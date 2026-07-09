@@ -10,9 +10,10 @@ class userRepo {
          Returning *;
         `
 
-        const values = [user.email, user.password_hash, user.role];
+        const values = [user.email, user.password_hash];
 
         const result = await pool.query(query, values);
+        return result.rows[0];
     }
 
     async findByEmail(email){

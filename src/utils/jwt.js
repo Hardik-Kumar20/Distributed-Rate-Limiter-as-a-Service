@@ -8,7 +8,7 @@ function generateToken(user){
             id: user.id,
             email: user.email,
         },
-        JWT_SECRET,
+        jwtSecret,
         {
             expiresIn: "7d",
         }
@@ -16,7 +16,7 @@ function generateToken(user){
 }
 
 function verifyToken(token) {
-    return jwt.verify(token, JWT_SECRET);
+    return jwt.verify(token, jwtSecret);
 }
 
 module.exports = {
