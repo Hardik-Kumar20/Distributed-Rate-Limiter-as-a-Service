@@ -1,0 +1,299 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Inter, Arial, sans-serif;
+    background: #f5f7fb;
+    color: #1f2937;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* ---------- Layout ---------- */
+
+.layout {
+    min-height: 100vh;
+}
+
+.layout-body {
+    display: flex;
+    margin-top: 70px;
+}
+
+/* ---------- Navbar ---------- */
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 70px;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #e5e7eb;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 0 32px;
+
+    z-index: 100;
+}
+
+.navbar-logo {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.logout-btn {
+    padding: 10px 18px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #ef4444;
+    color: white;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.logout-btn:hover {
+    background: #dc2626;
+}
+
+/* ---------- Sidebar ---------- */
+
+.sidebar {
+    width: 240px;
+    min-height: calc(100vh - 70px);
+
+    background: white;
+
+    border-right: 1px solid #e5e7eb;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 24px 16px;
+
+    gap: 12px;
+}
+
+.sidebar a {
+    padding: 12px 16px;
+
+    border-radius: 8px;
+
+    font-weight: 500;
+
+    transition: .2s;
+}
+
+.sidebar a:hover {
+    background: #eef2ff;
+}
+
+.sidebar a.active {
+    background: #2563eb;
+    color: white;
+}
+
+/* ---------- Main ---------- */
+
+.page-content {
+    flex: 1;
+    padding: 40px;
+}
+
+.page-title {
+    font-size: 34px;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+.metrics-grid {
+    display: grid;
+
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+
+    gap: 24px;
+}
+
+.metric-card {
+
+    background: white;
+
+    border-radius: 14px;
+
+    padding: 24px;
+
+    box-shadow: 0 8px 25px rgba(0,0,0,.05);
+
+    border: 1px solid #e5e7eb;
+
+    transition: .25s;
+}
+
+.metric-card:hover{
+
+    transform: translateY(-4px);
+
+    box-shadow: 0 15px 35px rgba(0,0,0,.08);
+
+}
+
+.metric-card h3{
+
+    color:#6b7280;
+
+    font-size:15px;
+
+    margin-bottom:14px;
+
+    font-weight:600;
+
+}
+
+.metric-card h2{
+
+    font-size:36px;
+
+    color:#111827;
+
+}
+
+
+
+.applications-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.application-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,.05);
+}
+
+.application-card h3 {
+    margin-bottom: 16px;
+    color: #111827;
+}
+
+.application-card p {
+    margin-bottom: 10px;
+    color: #4b5563;
+}
+
+
+.application-form{
+
+    display:flex;
+
+    gap:16px;
+
+    margin-bottom:30px;
+
+    flex-wrap:wrap;
+
+}
+
+.application-form input,
+.application-form select{
+
+    padding:12px 16px;
+
+    border:1px solid #d1d5db;
+
+    border-radius:8px;
+
+    font-size:15px;
+
+}
+
+.application-form input{
+
+    flex:1;
+
+    min-width:260px;
+
+}
+
+.application-form button{
+
+    padding:12px 20px;
+
+    border:none;
+
+    border-radius:8px;
+
+    background:#2563eb;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+}
+
+.application-form button:hover{
+
+    background:#1d4ed8;
+
+}
+
+.application-form button:disabled{
+
+    opacity:.6;
+
+    cursor:not-allowed;
+
+}
+
+
+
+
+.delete-btn{
+
+    margin-top:18px;
+
+    width:100%;
+
+    padding:10px;
+
+    border:none;
+
+    border-radius:8px;
+
+    background:#ef4444;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    transition:.2s;
+
+}
+
+.delete-btn:hover{
+
+    background:#dc2626;
+
+}

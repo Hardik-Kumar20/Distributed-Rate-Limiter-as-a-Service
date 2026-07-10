@@ -1,12 +1,12 @@
 const applicationRepo = require("../repositories/application.repository");
 
 module.exports = {
-    async createApplication(name, owner_id, plan){
-        const application = await applicationRepo.create(name, owner_id, plan);
+    async createApplication(applicationData){
+        const application = await applicationRepo.create(applicationData);
         return application;
     },
 
-    async findAll(){
+    async findAll(owner_id){
         const apps = await applicationRepo.findAll(owner_id);
         return apps;
     },
@@ -16,8 +16,8 @@ module.exports = {
         return app;
     },
 
-    async deleteApp(id){
-        const app = await applicationRepo.deleteApp(id);
+    async deleteApp(id, owner_id){
+        const app = await applicationRepo.deleteApp(id, owner_id);
         return app;
     }
 }

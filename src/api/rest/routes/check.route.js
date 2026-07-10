@@ -4,8 +4,13 @@ const rateLimiterController = require('../../controllers/rateLimiter.controller'
 
 router.post('/check', async (req, res) =>{
     try{
-        const {key, plan} = req.body;
-        const result = await rateLimiterController.checkRateLimit(key, plan);
+        const apiKey = req.headers['x-api-key'];
+        if(!apiKey){
+            return res.status(400).json({
+                error: "API key is required"
+            });
+        }
+        const result = await rateLimiterController.checkRateLimit(apiKey);
         res.json(result);
     }catch(err){
         console.error(err);

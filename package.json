@@ -23,6 +23,7 @@
   "homepage": "https://github.com/Hardik-Kumar20/Distributed-Rate-Limiter-as-a-Service#readme",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
     "crypto": "^1.0.1",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",

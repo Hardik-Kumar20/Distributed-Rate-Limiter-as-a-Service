@@ -46,7 +46,7 @@ router.get("/application/:id", async (req, res) => {
 
 
 
-router.delete("/application/:id", async (req, res) => {
+router.delete("/application/:id", authMiddleware, async (req, res) => {
     try {
         const {id} = req.params;
         const result = await applicationController.deleteApp(id, req.user.id);

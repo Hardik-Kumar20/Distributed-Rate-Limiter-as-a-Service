@@ -18,7 +18,7 @@ class ApplicationRepo{
             return result.rows[0];
     }
 
-    async findAll(){
+    async findAll(owner_id){
         const query = 
         `SELECT *
         FROM applications
@@ -40,12 +40,14 @@ class ApplicationRepo{
     }
 
 
-    async deleteApp(id){
+    async deleteApp(id, owner_id){
         const query =
         `DELETE FROM applications
-         WHERE id = $1;
+         WHERE id = $1
+         AND owner_id = $2
+         RETURNING *;
         `
-        const result = await pool.query(query, [id]);
+        const result = await pool.query(query, [id, owner_id]);
         return result.rows[0];
     }
 }

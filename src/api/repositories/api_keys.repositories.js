@@ -50,6 +50,17 @@ class ApiKeyRepo{
         const result = await pool.query(query, [id]);
         return result.rows[0];
     };
+
+    async updateLastUsed(id) {
+        const query = `
+            UPDATE api_keys
+            SET last_used_at = NOW()
+            WHERE id = $1
+            RETURNING *;
+        `;
+
+        await pool.query(query, [id]);
+    }
 }
 
 module.exports = new ApiKeyRepo();
